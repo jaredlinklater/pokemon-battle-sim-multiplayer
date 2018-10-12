@@ -10,4 +10,4 @@ client: client.o
 	g++ -o $@ $^
 
 clean:
-	rm *.o 
+	rm *.o
