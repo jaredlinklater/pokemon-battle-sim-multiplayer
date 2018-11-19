@@ -1,12 +1,6 @@
 CXXFLAGS = -std=c++11 -Wall -pedantic
 
-main: main.o server.o
-	g++ -o $@ $^
-
-server: server.o
-	g++ -o $@ $^
-
-client: client.o
+server: main.o global.o game.o arena.o battle.o attack.o pokemon.o pokemonMove.o trainer.o player.o ai.o server.o instance.o
 	g++ -o $@ $^
 
 clean:

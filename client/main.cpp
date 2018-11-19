@@ -1,12 +1,12 @@
 #include <iostream>
-#include "game.h"
+#include "client.h"
 using namespace std;
 
 //Main function, initialises and starts game
 int main() {
-	game gameA;
-	gameA.init();
-	gameA.start();
+	client cli;
+	cli.init();
+	cli.connectToServer();
 
 	cout << endl << "Thanks for playing!" << endl;
 

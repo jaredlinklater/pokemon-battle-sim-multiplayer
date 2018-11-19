@@ -1,45 +1,75 @@
-// Client side C/C++ program to demonstrate Socket programming 
-#include <stdio.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <string.h>
-#include <time.h>
-#define PORT 4434
+#include <iostream>
+#include <sstream>
+#include "client.h"
 
-void clientError(string error) {
-	printf("%s\n", error);
+//Gets int input from command line and error checks
+int getInput(int min, int max) {
+	int input;
+	string x;
+
+	getline(cin, x);
+	stringstream(x) >> input;
+	while(!(input >= min && input <= max)) { //Error checking
+		cout << "Invalid selection! Please enter a number from " << min << " to " << max << "." << endl;
+		getline(cin, x);
+		stringstream(x) >> input;
+	}
+
+	return input;
+}
+
+int clientError(string error) {
+	printf("%s\n", error.c_str());
 	return -1;
 }
    
-int main() {
-	struct sockaddr_in address;
-	int sock = 0;
-	struct sockaddr_in serv_addr;
-	time_t timer = time(NULL);
-	time (&timer);
-	char *hello = ctime (&timer);
-	char buffer[1024] = {0};
+int client::init() {
+	port = 4434;
+	sock = 0;
 
 	if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		return clientError("\nSocket creation error");
    
-	memset(&serv_addr, '0', sizeof(serv_addr)); 
+	memset(&serv_addr, '0', sizeof(serv_addr));
    
-	serv_addr.sin_family = AF_INET; 
-	serv_addr.sin_port = htons(PORT); 
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(port);
 	   
 	// Convert IPv4 and IPv6 addresses from text to binary form 
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0)
-		clientError("\nInvalid address/ Address not supported");
+		return clientError("\nInvalid address/ Address not supported");
+	return 0;
+}
 
+int client::connectToServer() {
+	char buffer[1024] = {0};
 	if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-		clientError("\nConnection Failed");
+		return clientError("\nConnection Failed");
 
-	send(sock, hello, strlen(hello), 0); 
-	printf("Hello message sent\n"); 
-	read(sock, buffer, 1024); 
+	char *message = "Attempting connection!\n";
+	send(sock, message, strlen(message), 0);
+	printf("Connecting...\n");
+
+	read(sock, buffer, 1024);
 	printf("%s\n", buffer);
+	memset(buffer, 0, sizeof(buffer));
+	
+	/*read(sock, buffer, 1024);
+	printf("%s\n", buffer);
+	memset(buffer, 0, sizeof(buffer));
+	*/
+
+	char const *message2 = "hello1";
+	send(sock, message2, strlen(message2), 0);
+
+	while(1) {
+		//sendToServer(1, 4);
+	}
 	
 	return 0; 
+}
+
+void client::sendToServer(int min, int max) {
+	char const *message = to_string(getInput(min, max)).c_str();
+	send(sock, message, strlen(message), 0);
 }

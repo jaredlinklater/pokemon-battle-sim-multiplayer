@@ -3,9 +3,9 @@
 using namespace std;
 
 int main() {
-	Server server;
-	server.init();
-	server.beginListening();
+	server serv;
+	serv.init();
+	serv.beginListening();
 
 	return 0;
 }
